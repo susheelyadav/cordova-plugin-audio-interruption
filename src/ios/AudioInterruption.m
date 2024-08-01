@@ -24,14 +24,14 @@
     if ([notification.name isEqualToString:AVAudioSessionInterruptionNotification]) {
         // Check to see if it was a Begin interruption
          NSNumber *interruptionType = notification.userInfo[AVAudioSessionInterruptionTypeKey];
-         
+            NSString *statusMessage;
+
         if ([[notification.userInfo valueForKey:AVAudioSessionInterruptionTypeKey] isEqualToNumber:[NSNumber numberWithInt:AVAudioSessionInterruptionTypeBegan]]) {
-           NSString * statusMessage = [NSString stringWithFormat:@"INTERRUPTION_BEGIN_%@", interruptionType];
-(*             [self sendStatusNameInJS:@"INTERRUPTION_BEGIN"]; *)
+          statusMessage = [NSString stringWithFormat:@"INTERRUPTION_BEGIN_%@", interruptionType];
+
             [self sendStatusNameInJS:statusMessage];
         } else {
-(*             [self sendStatusNameInJS:@"INTERRUPTION_ENDED"]; *)
-           NSString * statusMessage = [NSString stringWithFormat:@"INTERRUPTION_ENDED_%@", interruptionType];
+           statusMessage = [NSString stringWithFormat:@"INTERRUPTION_ENDED_%@", interruptionType];
            [self sendStatusNameInJS:statusMessage];
         }
     }
