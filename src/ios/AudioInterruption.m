@@ -1,4 +1,6 @@
 #import "AudioInterruption.h"
+#import <CoreTelephony/CTCallCenter.h>
+#import <CoreTelephony/CTCall.h>
 
 @implementation AudioInterruption
 
@@ -23,12 +25,16 @@
 {
     if ([notification.name isEqualToString:AVAudioSessionInterruptionNotification]) {
         // Check to see if it was a Begin interruption
-        NSString *interruptionType = notification.userInfo[AVAudioSessionInterruptionReasonKey];
+        NSString *interruptionType;
         NSString *statusMessage;
 
         if ([[notification.userInfo valueForKey:AVAudioSessionInterruptionTypeKey] isEqualToNumber:[NSNumber numberWithInt:AVAudioSessionInterruptionTypeBegan]]) {
+            CTCallCenter *callCenter = [[CTCallCenter alloc] init];
+            CTCall *call = [[callCenter currentCalls] anyObject];
+            if (call != nil && call.callState == CTCallStateIncoming) {
+                interruptionType = @"INCOMING_CALL";
+            }
           statusMessage = [NSString stringWithFormat:@"INTERRUPTION_BEGIN_%@", interruptionType];
-
             [self sendStatusNameInJS:statusMessage];
         } else {
            statusMessage = [NSString stringWithFormat:@"INTERRUPTION_ENDED_%@", interruptionType];
